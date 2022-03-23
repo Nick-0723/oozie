@@ -46,109 +46,109 @@ import org.mockito.Mockito;
  */
 public class TestECPolicyDisabler  {
 
-    static abstract class MockDistributedFileSystem extends DistributedFileSystem {
-        public abstract SystemErasureCodingPolicies.ReplicationPolicy getErasureCodingPolicy(Path path);
-        public abstract void setErasureCodingPolicy(Path path, String policy);
-    }
-
-    @Before
-    public void setup() {
-        SystemErasureCodingPolicies.setSystemPolicy(ReplicationPolicy.DEFAULT);
-    }
-
-    @Test
-    public void testNotSupported() {
-        FileSystem fs = mock(FileSystem.class);
-        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
-        Assert.assertEquals("result is expected", Result.NOT_SUPPORTED, result);
-    }
-
-    @Test
-    public void testOkNotChanged() {
-        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
-        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.DEFAULT);
-        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
-        assertEquals("result is expected", Result.ALREADY_SET, result);
-        verify(fs).getErasureCodingPolicy(any());
-        verifyNoMoreInteractions(fs);
-    }
-
-    @Test
-    public void testOkChanged() {
-        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
-        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.OTHER);
-        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
-        assertEquals("result is expected", Result.DONE, result);
-        verify(fs).getErasureCodingPolicy(any());
-        verify(fs).setErasureCodingPolicy(any(), eq("DEFAULT"));
-        verifyNoMoreInteractions(fs);
-    }
-
-    @Test
-    public void testServerNotSupports() {
-        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
-        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.OTHER);
-        Mockito.doThrow(createNoSuchMethodException()).when(fs).setErasureCodingPolicy(any(), any());
-        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
-        assertEquals("result is expected", Result.NO_SUCH_METHOD, result);
-        verify(fs).getErasureCodingPolicy(any());
-        verify(fs).setErasureCodingPolicy(any(), eq("DEFAULT"));
-        verifyNoMoreInteractions(fs);
-    }
-
-    @Test
-    public void testServerNotSupportsGetErasureCodingPolicyMethod() {
-        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
-        when(fs.getErasureCodingPolicy(any(Path.class))).thenThrow(createNoSuchMethodException());
-        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, mock(Path.class));
-        assertEquals("result is expected", Result.NO_SUCH_METHOD, result);
-        verify(fs).getErasureCodingPolicy(any(Path.class));
-        verifyNoMoreInteractions(fs);
-    }
-
-    @Test
-    public void testServerNotSupportsGetName() {
-        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
-        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.OTHER);
-
-        ReplicationPolicy mockPolicy = mock(ReplicationPolicy.class);
-        SystemErasureCodingPolicies.setSystemPolicy(mockPolicy);
-        when(mockPolicy.getName()).thenThrow(createNoSuchMethodException());
-        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
-        assertEquals("result is expected", Result.NO_SUCH_METHOD, result);
-        verify(fs).getErasureCodingPolicy(any());
-        verifyNoMoreInteractions(fs);
-    }
-
-    @Test
-    public void testServerNotSupportsSetErasureCodingPolicyMethod() {
-        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
-        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.OTHER);
-        Mockito.doThrow(createNoSuchMethodException()).when(fs).setErasureCodingPolicy(any(), any());
-        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
-        assertEquals("result is expected", Result.NO_SUCH_METHOD, result);
-        verify(fs).getErasureCodingPolicy(any());
-        verify(fs).setErasureCodingPolicy(any(), eq("DEFAULT"));
-        verifyNoMoreInteractions(fs);
-    }
-
-    @Test
-    public void testOtherRuntimeExceptionThrown() {
-        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
-        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.OTHER);
-        Mockito.doThrow(new RuntimeException("mock io exception")).when(fs).setErasureCodingPolicy(any(), any());
-        try {
-            ECPolicyDisabler.check(fs, null);
-            Assert.fail("exception expected");
-        } catch (RuntimeException e) {
-            assertNotNull("runtime exception got", e);
-        }
-        verify(fs).getErasureCodingPolicy(any());
-        verify(fs).setErasureCodingPolicy(any(), eq("DEFAULT"));
-        verifyNoMoreInteractions(fs);
-    }
-
-    private RuntimeException createNoSuchMethodException() {
-        return new RuntimeException(new RemoteException("test", "error", RpcErrorCodeProto.ERROR_NO_SUCH_METHOD));
-    }
+//    static abstract class MockDistributedFileSystem extends DistributedFileSystem {
+//        public abstract SystemErasureCodingPolicies.ReplicationPolicy getErasureCodingPolicy(Path path);
+//        public abstract void setErasureCodingPolicy(Path path, String policy);
+//    }
+//
+//    @Before
+//    public void setup() {
+//        SystemErasureCodingPolicies.setSystemPolicy(ReplicationPolicy.DEFAULT);
+//    }
+//
+//    @Test
+//    public void testNotSupported() {
+//        FileSystem fs = mock(FileSystem.class);
+//        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
+//        Assert.assertEquals("result is expected", Result.NOT_SUPPORTED, result);
+//    }
+//
+//    @Test
+//    public void testOkNotChanged() {
+//        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
+//        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.DEFAULT);
+//        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
+//        assertEquals("result is expected", Result.ALREADY_SET, result);
+//        verify(fs).getErasureCodingPolicy(any());
+//        verifyNoMoreInteractions(fs);
+//    }
+//
+//    @Test
+//    public void testOkChanged() {
+//        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
+//        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.OTHER);
+//        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
+//        assertEquals("result is expected", Result.DONE, result);
+//        verify(fs).getErasureCodingPolicy(any());
+//        verify(fs).setErasureCodingPolicy(any(), eq("DEFAULT"));
+//        verifyNoMoreInteractions(fs);
+//    }
+//
+//    @Test
+//    public void testServerNotSupports() {
+//        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
+//        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.OTHER);
+//        Mockito.doThrow(createNoSuchMethodException()).when(fs).setErasureCodingPolicy(any(), any());
+//        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
+//        assertEquals("result is expected", Result.NO_SUCH_METHOD, result);
+//        verify(fs).getErasureCodingPolicy(any());
+//        verify(fs).setErasureCodingPolicy(any(), eq("DEFAULT"));
+//        verifyNoMoreInteractions(fs);
+//    }
+//
+//    @Test
+//    public void testServerNotSupportsGetErasureCodingPolicyMethod() {
+//        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
+//        when(fs.getErasureCodingPolicy(any(Path.class))).thenThrow(createNoSuchMethodException());
+//        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, mock(Path.class));
+//        assertEquals("result is expected", Result.NO_SUCH_METHOD, result);
+//        verify(fs).getErasureCodingPolicy(any(Path.class));
+//        verifyNoMoreInteractions(fs);
+//    }
+//
+//    @Test
+//    public void testServerNotSupportsGetName() {
+//        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
+//        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.OTHER);
+//
+//        ReplicationPolicy mockPolicy = mock(ReplicationPolicy.class);
+//        SystemErasureCodingPolicies.setSystemPolicy(mockPolicy);
+//        when(mockPolicy.getName()).thenThrow(createNoSuchMethodException());
+//        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
+//        assertEquals("result is expected", Result.NO_SUCH_METHOD, result);
+//        verify(fs).getErasureCodingPolicy(any());
+//        verifyNoMoreInteractions(fs);
+//    }
+//
+//    @Test
+//    public void testServerNotSupportsSetErasureCodingPolicyMethod() {
+//        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
+//        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.OTHER);
+//        Mockito.doThrow(createNoSuchMethodException()).when(fs).setErasureCodingPolicy(any(), any());
+//        ECPolicyDisabler.Result result = ECPolicyDisabler.check(fs, null);
+//        assertEquals("result is expected", Result.NO_SUCH_METHOD, result);
+//        verify(fs).getErasureCodingPolicy(any());
+//        verify(fs).setErasureCodingPolicy(any(), eq("DEFAULT"));
+//        verifyNoMoreInteractions(fs);
+//    }
+//
+//    @Test
+//    public void testOtherRuntimeExceptionThrown() {
+//        MockDistributedFileSystem fs = mock(MockDistributedFileSystem.class);
+//        when(fs.getErasureCodingPolicy(any())).thenReturn(ReplicationPolicy.OTHER);
+//        Mockito.doThrow(new RuntimeException("mock io exception")).when(fs).setErasureCodingPolicy(any(), any());
+//        try {
+//            ECPolicyDisabler.check(fs, null);
+//            Assert.fail("exception expected");
+//        } catch (RuntimeException e) {
+//            assertNotNull("runtime exception got", e);
+//        }
+//        verify(fs).getErasureCodingPolicy(any());
+//        verify(fs).setErasureCodingPolicy(any(), eq("DEFAULT"));
+//        verifyNoMoreInteractions(fs);
+//    }
+//
+//    private RuntimeException createNoSuchMethodException() {
+//        return new RuntimeException(new RemoteException("test", "error", RpcErrorCodeProto.ERROR_NO_SUCH_METHOD));
+//    }
 }

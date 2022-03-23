@@ -131,7 +131,7 @@ public class MiniHCatServer {
             @Override
             public void run() {
                 try {
-                    HiveMetaStore.startMetaStore(msPort, ShimLoader.getHadoopThriftAuthBridge(), serverConf);
+                    HiveMetaStore.startMetaStore(msPort, null, serverConf);
                     LOG.info("Started metastore server on port " + msPort);
                 }
                 catch (Throwable e) {
