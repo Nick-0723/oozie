@@ -80,8 +80,8 @@
         </oozie.test.default.config.file>
         <oozie.test.config.file>${oozie.test.default.config.file}</oozie.test.config.file>
 
-        <hadoop.version>2.6.0</hadoop.version>
-        <hadoop.majorversion>2</hadoop.majorversion>
+        <hadoop.version>3.3.2</hadoop.version>
+        <hadoop.majorversion>3</hadoop.majorversion>
         <hadooplib.version>hadoop-${hadoop.majorversion}-${project.version}</hadooplib.version>
         <hbase.version>1.2.3</hbase.version>
 
@@ -114,7 +114,7 @@
          <openjpa.version>2.4.2</openjpa.version>
          <derby.version>10.14.2.0</derby.version>
          <xerces.version>2.11.0</xerces.version>
-         <curator.version>2.5.0</curator.version>
+         <curator.version>4.2.0</curator.version>
          <jackson.version>2.6.5</jackson.version>
          <log4j.version>1.2.17</log4j.version>
          <activemq.version>5.15.9</activemq.version>
@@ -1417,7 +1417,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>11.0.2</version>
+                <version>27.0.1-jre</version>
             </dependency>
 
             <dependency>
